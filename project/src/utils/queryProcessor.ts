@@ -15,7 +15,7 @@ const POLITE_KEYWORDS = [
     'thanks', 'thank you', 'please', 'regards', 'best regards', 'kind regards'
 ];
 
-let HISTORY_PATTERN: string[] = [];
+// let HISTORY_PATTERN: string[] = [];
 
 export const processQuery = async (query: string, settings: ModelSettings): Promise<QueryResponse> => {
 
@@ -29,14 +29,14 @@ export const processQuery = async (query: string, settings: ModelSettings): Prom
         };
     }
 
-    HISTORY_PATTERN.push(query);
+    // HISTORY_PATTERN.push(query);
 
-    if (isRepeatedQuery(query)) {
-        return {
-            content: "Cette question a déjà été posée. Veuillez consulter l'historique de la conversation.",
-            isRedirect: false,
-        };
-    }
+    // if (isRepeatedQuery(query)) {
+    //     return {
+    //         content: "Cette question a déjà été posée. Veuillez consulter l'historique de la conversation.",
+    //         isRedirect: false,
+    //     };
+    // }
 
     if (isPolitical(query)) {
         return {
@@ -94,10 +94,12 @@ export const processQuery = async (query: string, settings: ModelSettings): Prom
     if (!response.ok) {
         throw new Error('Failed to connect to Ollama');
     }
-    const result = await response.json();
+    const { response: raw } = await response.json();
     
+    const cleanedContent = raw.replace(/<\/?think>/gi, '').trim();
+
     return {
-        content: result.response,
+        content: cleanedContent,
         isRedirect: false
         };  
     } catch (error) {
@@ -154,9 +156,9 @@ function isBashCommand(cmdName: string): boolean {
     return COMMON_COMMANDS.has(cmdName);
 }
 
-function isRepeatedQuery(query: string): boolean {
-    return HISTORY_PATTERN.includes(query);
-}
+// function isRepeatedQuery(query: string): boolean {
+//     return HISTORY_PATTERN.includes(query);
+// }
 
 function isPolitical(query: string): boolean {
     return POLITE_KEYWORDS.includes(query);
