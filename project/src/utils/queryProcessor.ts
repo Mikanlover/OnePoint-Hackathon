@@ -67,7 +67,13 @@ export const processQuery = async (query: string, settings: ModelSettings): Prom
 const checkIfSimpleQuery = (query: string, threshold: string): boolean => {
     const simpleIndicators = [
         'what is', 'who is', 'where is', 'when is', 'how to', 
-        'define', 'meaning of', 'weather in', 'capital of', 'population of'
+        'define', 'meaning of', 'weather in', 'capital of', 'population of',
+        'explain', 'example of', 'list of', 'steps to', 'why is', 
+        'history of', 'facts about', 'distance to', 'time in', 'recipe for',
+        'benefits of', 'uses of', 'difference between', 'symptoms of', 
+        'causes of', 'treatment for', 'how does', 'how much', 'how many',
+        'types of', 'advantages of', 'disadvantages of', 'origin of', 
+        'purpose of', 'importance of', 'process of', 'function of'
     ];
     
     const wordCount = query.split(' ').length;
