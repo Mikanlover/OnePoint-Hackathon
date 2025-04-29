@@ -1,24 +1,30 @@
 import { ModelSettings, QueryResponse } from '../types';
 
 // Configuration for Ollama
-const OLLAMA_API_URL = 'http://localhost:11434/';
-
+const OLLAMA_API_URL = 'http://localhost:11434/api/generate';
 export const processQuery = async (query: string, settings: ModelSettings): Promise<QueryResponse> => {
     try {
-    // Call Ollama API
-    const response = await fetch(OLLAMA_API_URL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            model: 'deepseek-r1:7b',
-            prompt: query,
-            temperature: settings.temperature,
-            max_tokens: settings.maxTokens,
-            stream: false
-        }),
-    });
+
+        // Call Ollama API
+        let response;
+        try {
+            response = await fetch(OLLAMA_API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    model: 'deepseek-r1:7b',
+                    prompt: query,
+                    temperature: settings.temperature,
+                    max_tokens: settings.maxTokens,
+                    stream: false
+                }),
+            });
+        } catch (networkError) {
+            console.error('Network error:', networkError);
+            throw new Error('Network error: Unable to connect to Ollama API. Please check your network or server status.');
+        }
 
     if (!response.ok) {
         throw new Error('Failed to connect to Ollama');
