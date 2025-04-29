@@ -95,7 +95,7 @@ export const processQuery = async (query: string, settings: ModelSettings): Prom
     }
     const { response: raw } = await response.json();
     
-    const cleanedContent = raw.replace(/<\/?think>/gi, '').trim();
+    const cleanedContent = raw.replace(/<think[\s\S]*?<\/think>/gi, '').replace(/\n{3,}/g, '\n\n').trim();
 
     return {
         content: cleanedContent,
