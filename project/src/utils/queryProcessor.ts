@@ -80,10 +80,11 @@ export const processQuery = async (query: string, settings: ModelSettings): Prom
     if (!response.ok) {
         throw new Error('Failed to connect to Ollama');
     }
-    const result = await response.json();
-    
+    const { response: raw } = await response.json();
+
+    const cleanedContent = raw.replace(/<\/?think>/gi, '').trim();
     return {
-        content: result.response,
+        content: cleanedContent,
         isRedirect: false
         };  
     } catch (error) {
