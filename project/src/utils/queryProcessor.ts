@@ -8,6 +8,13 @@ const NON_TECHNICAL_KEYWORDS = [
     'holiday', 'vacation', 'shopping', 'news', 'politics'
 ];
 
+const POLITE_KEYWORDS = [
+    'bonjour', 'salut', 'coucou', 'merci', "s'il te plaît", "s'il vous plaît", 'svp',
+    'cordialement', 'bien à vous', 'bonne journée',
+    'hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening',
+    'thanks', 'thank you', 'please', 'regards', 'best regards', 'kind regards'
+];
+
 let HISTORY_PATTERN: string[] = [];
 
 export const processQuery = async (query: string, settings: ModelSettings): Promise<QueryResponse> => {
@@ -27,6 +34,13 @@ export const processQuery = async (query: string, settings: ModelSettings): Prom
     if (isRepeatedQuery(query)) {
         return {
             content: "Cette question a déjà été posée. Veuillez consulter l'historique de la conversation.",
+            isRedirect: false,
+        };
+    }
+
+    if (isPolitical(query)) {
+        return {
+            content: "Pas besoin de formule de politesse, au contraire, vous me faites utiliser de l'énergie précieuse pour rien",
             isRedirect: false,
         };
     }
@@ -119,8 +133,6 @@ const checkIfSimpleQuery = (query: string, threshold: string): boolean => {
     return (wordCount < 6 * thresholdMultiplier) && hasSimpleIndicator;
 };
 
-
-
 // Immediately handle very simple queries without calling DeepSeek
 function isBashCommand(cmdName: string): boolean {
     if (/\s/.test(cmdName.trim())) return false;
@@ -144,4 +156,8 @@ function isBashCommand(cmdName: string): boolean {
 
 function isRepeatedQuery(query: string): boolean {
     return HISTORY_PATTERN.includes(query);
+}
+
+function isPolitical(query: string): boolean {
+    return POLITE_KEYWORDS.includes(query);
 }
