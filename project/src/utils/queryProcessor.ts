@@ -15,35 +15,34 @@ const POLITE_KEYWORDS = [
     'thanks', 'thank you', 'please', 'regards', 'best regards', 'kind regards'
 ];
 
-// let HISTORY_PATTERN: string[] = [];
+let HISTORY_PATTERN: string[] = [];
 
 export const processQuery = async (query: string, settings: ModelSettings): Promise<QueryResponse> => {
 
     const normalizedQuery = query.toLowerCase();
 
-    
     if (NON_TECHNICAL_KEYWORDS.some(keyword => normalizedQuery.includes(keyword))) {
         return {
             content: "Je ne réponds qu'aux questions techniques liées à l'informatique.",
             isRedirect: false,
         };
     }
-
-    // HISTORY_PATTERN.push(query);
-
-    // if (isRepeatedQuery(query)) {
-    //     return {
-    //         content: "Cette question a déjà été posée. Veuillez consulter l'historique de la conversation.",
-    //         isRedirect: false,
-    //     };
-    // }
-
+    
     if (isPolitical(query)) {
         return {
             content: "Pas besoin de formule de politesse, au contraire, vous me faites utiliser de l'énergie précieuse pour rien",
             isRedirect: false,
         };
     }
+
+    if (isRepeatedQuery(query)) {
+        return {
+            content: "Cette question a déjà été posée. Veuillez consulter l'historique de la conversation.",
+            isRedirect: false,
+        };
+    }
+
+    HISTORY_PATTERN.push(query);
 
     if (isBashCommand(normalizedQuery)) {
         return {
@@ -156,9 +155,9 @@ function isBashCommand(cmdName: string): boolean {
     return COMMON_COMMANDS.has(cmdName);
 }
 
-// function isRepeatedQuery(query: string): boolean {
-//     return HISTORY_PATTERN.includes(query);
-// }
+function isRepeatedQuery(searchString: string): boolean {
+    return HISTORY_PATTERN.includes(searchString);
+}
 
 function isPolitical(query: string): boolean {
     return POLITE_KEYWORDS.includes(query);
