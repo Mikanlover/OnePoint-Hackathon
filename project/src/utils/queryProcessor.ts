@@ -8,7 +8,6 @@ const NON_TECHNICAL_KEYWORDS = [
     'holiday', 'vacation', 'shopping', 'news', 'politics'
 ];
 
-let HISTORY_PATTERN: string[] = [];
 
 export const processQuery = async (query: string, settings: ModelSettings): Promise<QueryResponse> => {
 
@@ -18,15 +17,6 @@ export const processQuery = async (query: string, settings: ModelSettings): Prom
     if (NON_TECHNICAL_KEYWORDS.some(keyword => normalizedQuery.includes(keyword))) {
         return {
             content: "Je ne réponds qu'aux questions techniques liées à l'informatique.",
-            isRedirect: false,
-        };
-    }
-
-    HISTORY_PATTERN.push(query);
-
-    if (isRepeatedQuery(query, HISTORY_PATTERN)) {
-        return {
-            content: "Cette question a déjà été posée. Veuillez consulter l'historique de la conversation.",
             isRedirect: false,
         };
     }
@@ -143,9 +133,3 @@ function isBashCommand(cmdName: string): boolean {
     return COMMON_COMMANDS.has(cmdName);
 }
 
-function isRepeatedQuery(query: string, history: ChatHistoryItem[]): boolean {
-    return history.some(item => 
-        item.query.toLowerCase().trim() === query.toLowerCase().trim()
-    );
-}
-  
